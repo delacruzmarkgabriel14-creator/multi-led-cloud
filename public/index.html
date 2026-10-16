@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-LED Cloud Control</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; background: #222; color: white; margin-top: 5vh; }
+    .dashboard { max-width: 400px; margin: auto; background: #333; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+    .led-row { display: flex; justify-content: space-between; align-items: center; margin: 20px 0; padding: 15px; background: #444; border-radius: 8px; }
+    .status { font-weight: bold; width: 50px; }
+    button { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; transition: 0.2s; }
+    .btn-on { background: #28a745; }
+    .btn-on:hover { background: #218838; }
+    .btn-off { background: #dc3545; }
+    .btn-off:hover { background: #c82333; }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <h2>System Control</h2>
+    
+    <div class="led-row">
+      <span>RED LED</span>
+      <span id="redStatus" class="status">...</span>
+      <div>
+        <button class="btn-on" onclick="toggleLED('red', 'ON')">ON</button>
+        <button class="btn-off" onclick="toggleLED('red', 'OFF')">OFF</button>
+      </div>
+    </div>
+
+    <div class="led-row">
+      <span>GREEN LED</span>
+      <span id="greenStatus" class="status">...</span>
+      <div>
+        <button class="btn-on" onclick="toggleLED('green', 'ON')">ON</button>
+        <button class="btn-off" onclick="toggleLED('green', 'OFF')">OFF</button>
+      </div>
+    </div>
+
+    <div class="led-row">
+      <span>BLUE LED</span>
+      <span id="blueStatus" class="status">...</span>
+      <div>
+        <button class="btn-on" onclick="toggleLED('blue', 'ON')">ON</button>
+        <button class="btn-off" onclick="toggleLED('blue', 'OFF')">OFF</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fetch and load initial states when the page opens
+    function updateUI(data) {
+      document.getElementById('redStatus').innerText = data.red;
+      document.getElementById('greenStatus').innerText = data.green;
+      document.getElementById('blueStatus').innerText = data.blue;
+    }
+
+    fetch('/api/state')
+      .then(res => res.json())
+      .then(updateUI);
+
+    // Send command to server and update UI when a button is clicked
+    function toggleLED(color, state) {
+      fetch(`/set?color=${color}&state=${state}`)
+        .then(res => res.json())
+        .then(updateUI);
+    }
+  </script>
+</body>
+</html>
